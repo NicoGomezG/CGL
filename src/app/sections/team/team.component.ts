@@ -14,19 +14,30 @@ import { CommonModule } from '@angular/common';
           <p class="section-sub">Profesionales con años de experiencia en el mundo del esports y el entretenimiento digital.</p>
         </div>
 
-        <div class="team-grid">
-          <div class="member-card" *ngFor="let m of members; let i = index" [style.--i]="i">
-            <div class="member-photo">
-              <img [src]="m.photo" [alt]="m.name"
+        <div class="magazine-grid">
+          <!-- Card destacada (grande) -->
+          <div class="photo-card featured" [style.--i]="0">
+            <div class="card-img">
+              <img [src]="members[0].photo" [alt]="members[0].role"
                    onerror="this.style.display='none'; this.parentElement.classList.add('no-photo')"/>
-              <div class="member-social">
-                <a *ngFor="let s of m.socials" [href]="s.url" target="_blank">{{ s.icon }}</a>
-              </div>
+              <div class="overlay"></div>
             </div>
-            <div class="member-info">
-              <div class="member-role">{{ m.role }}</div>
-              <h3>{{ m.name }}</h3>
-              <p>{{ m.bio }}</p>
+            <div class="card-info">
+              <span class="card-title">{{ members[0].role }}</span>
+            </div>
+          </div>
+
+          <!-- Cards secundarias -->
+          <div class="side-cards">
+            <div class="photo-card" *ngFor="let m of members.slice(1); let i = index" [style.--i]="i + 1">
+              <div class="card-img">
+                <img [src]="m.photo" [alt]="m.role"
+                     onerror="this.style.display='none'; this.parentElement.classList.add('no-photo')"/>
+                <div class="overlay"></div>
+              </div>
+              <div class="card-info">
+                <span class="card-title">{{ m.role }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -34,15 +45,12 @@ import { CommonModule } from '@angular/common';
     </section>
   `,
   styles: [`
-    .section {
-      background: var(--bg);
-    }
+    .section { background: var(--bg); }
 
     .section-head {
-      margin-bottom: 64px;
-      .section-tag { }
+      margin-bottom: 56px;
       .section-sub {
-        margin-top: 20px;
+        margin-top: 16px;
         color: var(--muted);
         font-size: 1rem;
         max-width: 500px;
@@ -50,138 +58,120 @@ import { CommonModule } from '@angular/common';
       }
     }
 
-    .team-grid {
+    /* ── Magazine layout ── */
+    .magazine-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
     }
 
-    .member-card {
-      animation: fadeUp 0.6s ease calc(var(--i) * 0.12s + 0.2s) both;
+    .side-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-      .member-photo {
-        position: relative;
+    /* ── Card base ── */
+    .photo-card {
+      position: relative;
+      overflow: hidden;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+      animation: fadeUp 0.6s ease calc(var(--i) * 0.12s + 0.2s) both;
+      cursor: pointer;
+
+      .card-img {
+        width: 100%;
         aspect-ratio: 3/4;
-        overflow: hidden;
         background: var(--bg3);
-        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
-        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
 
         img {
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           object-fit: cover;
-          transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+          filter: grayscale(20%);
+          transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), filter 0.4s;
           display: block;
-          filter: grayscale(30%);
         }
 
         &.no-photo::after {
           content: '👤';
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 4rem;
-          opacity: 0.3;
+          position: absolute; inset: 0;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 4rem; opacity: 0.3;
         }
+      }
 
-        .member-social {
-          position: absolute;
-          bottom: -60px;
-          left: 0; right: 0;
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          padding: 16px;
-          background: linear-gradient(to top, rgba(6,6,8,0.95), transparent);
-          transition: bottom 0.3s;
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%);
+        transition: opacity 0.3s;
+      }
 
-          a {
-            width: 36px; height: 36px;
-            background: rgba(0,255,136,0.1);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            text-decoration: none;
-            color: var(--text);
-            transition: background 0.2s, border-color 0.2s;
-            &:hover { background: var(--neon); border-color: var(--neon); }
+      .card-info {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        padding: 20px 18px 18px;
+
+        .card-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--text);
+          display: block;
+
+          &::before {
+            content: '';
+            display: block;
+            width: 24px; height: 2px;
+            background: var(--neon);
+            margin-bottom: 8px;
           }
         }
-
-        &:hover {
-          img { transform: scale(1.06); filter: grayscale(0%); }
-          .member-social { bottom: 0; }
-        }
       }
 
-      .member-role {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        color: var(--neon);
-        margin-bottom: 6px;
-      }
-
-      h3 {
-        font-family: 'Barlow Condensed', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text);
-        margin-bottom: 8px;
-        letter-spacing: 0.02em;
-      }
-
-      p {
-        font-size: 0.9rem;
-        color: var(--muted);
-        line-height: 1.6;
+      &:hover {
+        .card-img img { transform: scale(1.06); filter: grayscale(0%); }
+        .overlay { opacity: 0.85; }
       }
     }
 
-    @media (max-width: 600px) {
-      .team-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    /* Carta featured más alta */
+    .photo-card.featured .card-img {
+      aspect-ratio: 2/3;
+    }
+
+    @media (max-width: 768px) {
+      .magazine-grid { grid-template-columns: 1fr; }
+      .side-cards { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .side-cards { grid-template-columns: 1fr 1fr; }
     }
   `]
 })
 export class TeamComponent {
   members = [
     {
-      name: 'Andrés López',
       role: 'CEO & Founder',
-      bio: '8 años de experiencia en la industria del esports latinoamericano.',
       photo: 'assets/team/alex.jpg',
-      socials: [
-        { icon: '𝕏', url: '#' },
-        { icon: 'in', url: '#' }
-      ]
     },
     {
-      name: 'Manuel López',
-      role: 'CEO, Founder & Desinger',
-      bio: '.',
+      role: 'Designer',
       photo: 'assets/team/sofia.jpg',
-      socials: [{ icon: '𝕏', url: '#' }, { icon: '📸', url: '#' }]
     },
     {
-      name: 'Nicolás Gómez',
       role: 'Talent Manager',
-      bio: 'Scout profesional con red de contactos en los principales títulos.',
       photo: 'assets/team/mateo.jpg',
-      socials: [{ icon: '𝕏', url: '#' }, { icon: 'in', url: '#' }]
     },
     {
-      name: 'Diego López',
       role: 'Content Lead',
-      bio: 'Productora de contenido especializada en narrativas de competencia.',
       photo: 'assets/team/valeria.jpg',
-      socials: [{ icon: '𝕏', url: '#' }, { icon: '📸', url: '#' }]
     }
   ];
 }

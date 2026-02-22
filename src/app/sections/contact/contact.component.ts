@@ -259,7 +259,7 @@ export class ContactComponent {
   ];
 
   contactInfo = [
-    { icon: '✉️', label: 'Email', value: 'contacto@cglproducciones.com' },
+    { icon: '✉️', label: 'Email', value: 'CGL.PRODUCCIONES.SPAʘGMAIL.COM' },
     { icon: '📱', label: 'WhatsApp', value: '+56 9 3293 0593' },
     { icon: '📍', label: 'Ubicación', value: 'Santiago, Chile' },
   ];

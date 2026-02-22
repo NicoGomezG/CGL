@@ -15,18 +15,23 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
 
-      <!-- Marquee track -->
+      <!-- Fila 1: va hacia la IZQUIERDA (normal) -->
       <div class="marquee-wrapper">
-        <div class="marquee-track">
-          <div class="logos-row">
-            <div class="brand-logo" *ngFor="let brand of brands">
+        <div class="marquee-track left">
+          <div class="logos-row" *ngFor="let _ of [1,2]" aria-hidden="true">
+            <div class="brand-logo" *ngFor="let brand of brands"[title] = brand.name>
               <img *ngIf="brand.logo" [src]="brand.logo" [alt]="brand.name" />
               <span *ngIf="!brand.logo" class="brand-text">{{ brand.name }}</span>
             </div>
           </div>
-          <!-- Duplicado para loop infinito -->
-          <div class="logos-row" aria-hidden="true">
-            <div class="brand-logo" *ngFor="let brand of brands">
+        </div>
+      </div>
+
+      <!-- Fila 2: va hacia la DERECHA (reversa) -->
+      <div class="marquee-wrapper second">
+        <div class="marquee-track right">
+          <div class="logos-row" *ngFor="let _ of [1,2]" aria-hidden="true">
+            <div class="brand-logo" *ngFor="let brand of brandsAlt"[title] = brand.name>
               <img *ngIf="brand.logo" [src]="brand.logo" [alt]="brand.name" />
               <span *ngIf="!brand.logo" class="brand-text">{{ brand.name }}</span>
             </div>
@@ -61,9 +66,7 @@ import { CommonModule } from '@angular/common';
     .section-head {
       text-align: center;
       margin-bottom: 64px;
-
       .section-tag { justify-content: center; }
-
       .section-sub {
         margin-top: 16px;
         color: var(--muted);
@@ -72,15 +75,15 @@ import { CommonModule } from '@angular/common';
       }
     }
 
-    /* ──────────── Marquee ──────────── */
+    /* ── Marquee ── */
     .marquee-wrapper {
       position: relative;
       width: 100%;
       overflow: hidden;
 
-      /* Fade edges */
-      &::before,
-      &::after {
+      &.second { margin-top: 24px; }
+
+      &::before, &::after {
         content: '';
         position: absolute;
         top: 0; bottom: 0;
@@ -101,7 +104,9 @@ import { CommonModule } from '@angular/common';
     .marquee-track {
       display: flex;
       width: max-content;
-      animation: marquee 30s linear infinite;
+
+      &.left  { animation: marquee-left  30s linear infinite; }
+      &.right { animation: marquee-right 30s linear infinite; }
 
       &:hover { animation-play-state: paused; }
     }
@@ -109,64 +114,49 @@ import { CommonModule } from '@angular/common';
     .logos-row {
       display: flex;
       align-items: center;
-      gap: 0;
+      gap: 48px;
+      padding: 0 24px;
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 48px;
-      height: 80px;
-      border-right: 1px solid var(--border);
-      filter: grayscale(1) brightness(0.6);
-      transition: filter 0.3s, transform 0.3s;
-      cursor: default;
+      height: 48px;
+      opacity: 0.5;
+      transition: opacity 0.3s;
       flex-shrink: 0;
 
-      &:hover {
-        filter: grayscale(0) brightness(1);
-        transform: scale(1.08);
-      }
+      &:hover { opacity: 1; }
 
       img {
         max-height: 40px;
         max-width: 120px;
-        width: auto;
         object-fit: contain;
-        display: block;
-      }
-
-      .brand-text {
-        font-family: 'Barlow Condensed', sans-serif;
-        font-size: 1.4rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
-        white-space: nowrap;
-        transition: color 0.3s;
-      }
-
-      &:hover .brand-text {
-        color: var(--text);
+        filter: grayscale(100%) brightness(1.5);
+        transition: filter 0.3s;
+        &:hover { filter: none; }
       }
     }
 
-    @keyframes marquee {
+    .brand-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    @keyframes marquee-left {
       from { transform: translateX(0); }
       to   { transform: translateX(-50%); }
     }
 
-    @media (max-width: 768px) {
-      .brand-logo {
-        padding: 0 32px;
-        img { max-height: 32px; max-width: 90px; }
-        .brand-text { font-size: 1.1rem; }
-      }
-
-      .marquee-wrapper::before,
-      .marquee-wrapper::after { width: 80px; }
+    @keyframes marquee-right {
+      from { transform: translateX(-50%); }
+      to   { transform: translateX(0); }
     }
   `]
 })
@@ -174,6 +164,27 @@ export class CollaborationsComponent {
 
   // ── Edita este array con tus marcas reales ──
   brands: { name: string; logo?: string }[] = [
+    { name: 'BeFun',  logo: 'assets/brands/befun.png' },
+    { name: 'Cooler Master',      logo: 'assets/brands/coolermaster.png' },
+    { name: 'XBOX',    logo: 'assets/brands/xbox.png' },
+    { name: 'Banco de Chile',    logo: 'assets/brands/bdechile.png' },
+    { name: 'Festigame',      logo: 'assets/brands/festigame.png' },
+    { name: 'Universidad Andres Bello',       logo: 'assets/brands/unab.png' },
+    { name: 'Universidad Gabriela Mistral',       logo: 'assets/brands/ugm.png' },
+    { name: 'ComicCon',    logo: 'assets/brands/comiccon.webp' },
+    { name: 'Mega',    logo: 'assets/brands/mega.png' },
+    { name: '13 Esports',    logo: 'assets/brands/13s.webp' },
+    { name: 'ETC',    logo: 'assets/brands/etc.png' },
+    { name: 'Twitch',    logo: 'assets/brands/twitch.png' },
+    { name: 'Gamersclub',    logo: 'assets/brands/gamersclub.png' },
+    { name: 'Pegasum',    logo: 'assets/brands/pegasum.png' },
+    { name: 'SocialBuyers',    logo: 'assets/brands/sb.png' },
+    { name: 'Wacom',    logo: 'assets/brands/wacom.png' },
+    { name: 'Republic of Gamers',    logo: 'assets/brands/rog.png' },
+    { name: 'Thermaltake',    logo: 'assets/brands/tt.png' },
+    
+  ];
+  brandsAlt: { name: string; logo?: string }[] = [
     { name: 'BeFun',  logo: 'assets/brands/befun.png' },
     { name: 'Cooler Master',      logo: 'assets/brands/coolermaster.png' },
     { name: 'XBOX',    logo: 'assets/brands/xbox.png' },
