@@ -151,10 +151,9 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class TeamComponent {
-  // ─── REEMPLAZA con tu equipo real ─────────────────────────────────────────
   members = [
     {
-      name: 'Alex Reyes',
+      name: 'Andrés López',
       role: 'CEO & Founder',
       bio: '8 años de experiencia en la industria del esports latinoamericano.',
       photo: 'assets/team/alex.jpg',
@@ -164,21 +163,21 @@ export class TeamComponent {
       ]
     },
     {
-      name: 'Sofia Mora',
-      role: 'Brand Director',
-      bio: 'Experta en identidad de marca para atletas digitales y equipos.',
+      name: 'Manuel López',
+      role: 'CEO, Founder & Desinger',
+      bio: '.',
       photo: 'assets/team/sofia.jpg',
       socials: [{ icon: '𝕏', url: '#' }, { icon: '📸', url: '#' }]
     },
     {
-      name: 'Mateo Cruz',
+      name: 'Nicolás Gómez',
       role: 'Talent Manager',
       bio: 'Scout profesional con red de contactos en los principales títulos.',
       photo: 'assets/team/mateo.jpg',
       socials: [{ icon: '𝕏', url: '#' }, { icon: 'in', url: '#' }]
     },
     {
-      name: 'Valeria Kim',
+      name: 'Diego López',
       role: 'Content Lead',
       bio: 'Productora de contenido especializada en narrativas de competencia.',
       photo: 'assets/team/valeria.jpg',

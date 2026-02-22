@@ -14,7 +14,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 
           <div class="contact-left">
             <div class="section-tag">Hablemos</div>
-            <h2 class="section-title">¿LISTO PARA <span>PRODUCIR?</span></h2>
+            <h2 class="section-title">Contáctanos</h2>
             <p class="contact-desc">
               Cuéntanos sobre tu proyecto, equipo o carrera.
               Nuestro equipo te responde en menos de 24 horas.
@@ -251,19 +251,17 @@ export class ContactComponent {
   success = false;
 
   serviceOptions = [
-    'Representación de jugador',
-    'Brand Management',
-    'Content Strategy',
-    'Sponsorships',
-    'Análisis & Scouting',
-    'Event Management',
+    'Activaciones Gamer',
+    'Armado de computadoras y setups',
+    'Redes y distribución',
+    'Servicios de Streaming',
     'Otro'
   ];
 
   contactInfo = [
     { icon: '✉️', label: 'Email', value: 'contacto@cglproducciones.com' },
-    { icon: '📱', label: 'WhatsApp', value: '+1 (555) 000-0000' },
-    { icon: '📍', label: 'Ubicación', value: 'Latinoamérica' },
+    { icon: '📱', label: 'WhatsApp', value: '+56 9 3293 0593' },
+    { icon: '📍', label: 'Ubicación', value: 'Santiago, Chile' },
   ];
 
   constructor(private fb: FormBuilder) {

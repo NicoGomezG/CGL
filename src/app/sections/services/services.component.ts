@@ -154,33 +154,28 @@ export class ServicesComponent {
   services = [
     {
       icon: '🏆',
-      title: 'Representación',
-      desc: 'Negociamos contratos, sponsorships y acuerdos de equipo para maximizar el valor de tu carrera profesional.'
+      title: 'Organización de Competencias',
+      desc: 'Organizamos y producimos torneos.'
     },
     {
       icon: '📣',
-      title: 'Brand Management',
-      desc: 'Construimos y posicionamos tu marca personal en redes sociales, streams y medios especializados.'
+      title: 'Servicios de Streaming',
+      desc: 'Producción de transmisiones en vivo con calidad profesional para eventos y contenido.'
     },
     {
       icon: '🎮',
-      title: 'Content Strategy',
-      desc: 'Desarrollamos estrategias de contenido multiplataforma que conectan con tu audiencia gaming.'
+      title: 'Activaciones Gamer',
+      desc: 'Creamos experiencias interactivas y memorables para eventos, lanzamientos y campañas de marca.'
     },
     {
-      icon: '🤝',
-      title: 'Sponsorships',
-      desc: 'Conectamos atletas y equipos con marcas relevantes del ecosistema tecnológico y gaming.'
+      icon: '📡',
+      title: 'Conexión y distribución de redes',
+      desc: 'Gestionamos uso eficiente de redes.'
     },
     {
-      icon: '📊',
-      title: 'Análisis & Scouting',
+      icon: '💻',
+      title: 'Armado de computadoras y setups',
       desc: 'Identificamos talento emergente y oportunidades de crecimiento con datos y performance analytics.'
     },
-    {
-      icon: '🎯',
-      title: 'Event Management',
-      desc: 'Organizamos y producimos torneos, lanzamientos y eventos en vivo de alto impacto.'
-    }
   ];
 }

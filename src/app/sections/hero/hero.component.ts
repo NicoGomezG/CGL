@@ -32,7 +32,7 @@ import { CommonModule } from '@angular/common';
           </p>
 
           <div class="hero-actions">
-            <a href="#contact" class="neon-btn-solid">Trabaja con nosotros</a>
+            <a href="#contact" class="neon-btn-solid">Contáctanos</a>
             <a href="#gallery" class="neon-btn">Ver producciones</a>
           </div>
 
