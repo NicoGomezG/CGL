@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 
       <div class="container">
         <div class="hero-content">
-          <div class="section-tag">Esports Production — Soluciones Gamer</div>
+          <div class="section-tag">Productora de eventos — Soluciones Gamer</div>
 
           <h1 class="hero-title">
             <span class="line line-1">SOLUCIONES</span>
@@ -351,8 +351,8 @@ import { CommonModule } from '@angular/common';
 })
 export class HeroComponent {
   stats = [
-    { value: '50+', label: 'Atletas' },
-    { value: '3M+', label: 'Reach' },
+    { value: '50+', label: 'Competencias' },
     { value: '120+', label: 'Eventos' },
+    { value: '3M+', label: 'Alcance' },
   ];
 }
