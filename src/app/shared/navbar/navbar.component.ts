@@ -22,6 +22,7 @@ import { CommonModule } from '@angular/common';
           <a href="#gallery" (click)="menuOpen=false">Galería</a>
           <a href="#team" (click)="menuOpen=false">Team</a>
           <a href="#contact" class="neon-btn" (click)="menuOpen=false">Contacto</a>
+          <a href="#collaborations" (click)="menuOpen=false">Colaboraciones</a>
         </div>
 
         <button class="hamburger" (click)="menuOpen = !menuOpen" [class.open]="menuOpen">

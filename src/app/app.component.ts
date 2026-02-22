@@ -6,6 +6,7 @@ import { ServicesComponent } from './sections/services/services.component';
 import { GalleryComponent } from './sections/gallery/gallery.component';
 import { TeamComponent } from './sections/team/team.component';
 import { ContactComponent } from './sections/contact/contact.component';
+import { CollaborationsComponent } from './sections/collaborations/collaborations.component';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ import { ContactComponent } from './sections/contact/contact.component';
     ServicesComponent,
     GalleryComponent,
     TeamComponent,
-    ContactComponent
+    ContactComponent,
+    CollaborationsComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
