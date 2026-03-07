@@ -13,7 +13,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
         <div class="contact-wrap">
 
           <div class="contact-left">
-            <div class="section-tag">Hablemos</div>
+            <div class="section-tag">Hablémos</div>
             <h2 class="section-title">Contáctanos</h2>
             <p class="contact-desc">
               Cuéntanos sobre tu proyecto, equipo o carrera.

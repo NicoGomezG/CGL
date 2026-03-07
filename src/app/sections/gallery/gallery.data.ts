@@ -6,57 +6,68 @@
 export interface MediaItem {
   type: 'image' | 'video';
   src: string;
-  thumb?: string; // opcional, si no se pone usa src
+  thumb?: string;
   title: string;
+  date?: string;       
+  description?: string; 
 }
 
 export interface GalleryEvent {
-  id: string;           // slug único, sin espacios
-  name: string;         // nombre que aparece en el filtro
-  date: string;         // para ordenar y mostrar
-  cover: string;        // imagen de portada del evento
+  id: string;
+  name: string;
+  date: string;
+  cover: string;
+  category: 'eventos' | 'equipo' | string; // 
   items: MediaItem[];
 }
 
-// ─── AGREGA TUS EVENTOS AQUÍ ─────────────────────────────────
-// src puede ser:
-//   - Local:      'assets/gallery/nombre-evento/img1.jpg'
-//   - Firebase:   'https://firebasestorage.googleapis.com/...'
-//   - Cloudinary: 'https://res.cloudinary.com/...'
-// ─────────────────────────────────────────────────────────────
-
 export const GALLERY_EVENTS: GalleryEvent[] = [
   {
-    id: 'Eventos',
-    name: 'Eventos CGL',
+    id: 'redbull-homeground',
+    name: 'RedBull Homeground',
     date: '2024-05-20',
-    cover: 'assets/gallery/eventos/cover.jpg',
+    cover: 'assets/gallery/eventos/redbull/cover.jpg',
+    category: 'eventos',
     items: [
-      { type: 'image', src: 'assets/gallery/eventos/rbhg.jpg', title: 'RedBull Homeground 2024' },
-      { type: 'image', src: 'assets/gallery/eventos/img1.jpg', title: 'Panam 2023' },
-      { type: 'video', src: 'assets/gallery/eventos/vid1.mov', title: 'RedBull - Homeground X Final Worlds' },
+      {
+        type: 'image',
+        src: 'assets/gallery/eventos/redbull/img1.jpg',
+        title: 'RedBull Homeground 2024',
+        date: '2024-05-20',
+        description: 'Final regional y Watchparty de Worlds 2024.'
+      },
+    ]
+  },
+  {
+    id: 'panam-2023',
+    name: 'Panam 2023',
+    date: '2023-11-10',
+    cover: 'assets/gallery/eventos/panam/cover.jpg',
+    category: 'eventos',
+    items: [
+      {
+        type: 'image',
+        src: 'assets/gallery/eventos/panam/img1.jpg',
+        title: 'Panam 2023',
+        date: '2023-11-10',
+        description: 'Juegos Panamericanos Santiago 2023.'
+      },
     ]
   },
   {
     id: 'equipo',
     name: 'Equipo CGL',
-    date: '2024-11-15',
-    cover: 'assets/gallery/Equipo/img1.jpg',
+    date: '2024-01-01',
+    cover: 'assets/gallery/equipo/cover.jpg',
+    category: 'equipo',
     items: [
-      { type: 'image', src: 'assets/gallery/Equipo/img1.jpg', title: 'ETC 2018' },
-      { type: 'image', src: 'assets/gallery/Equipo/img2.jpg', title: 'Grand Final' },
-      { type: 'video', src: 'assets/gallery/Equipo/highlights.mp4', thumb: 'assets/gallery/Equipo /highlights-thumb.jpg', title: 'Highlights Finales' },
+      {
+        type: 'image',
+        src: 'assets/gallery/equipo/img1.jpg',
+        title: 'ETC 2018',
+        date: '2018-06-01',
+        description: 'Final CSGO 2018 - OPEN.'
+      },
     ]
   },
-  // ── Copia este bloque para agregar un evento ──────────────
-  // {
-  //   id: 'nombre-del-evento',
-  //   name: 'Nombre visible en filtro',
-  //   date: 'YYYY-MM-DD',
-  //   cover: 'assets/gallery/nombre-del-evento/cover.jpg',
-  //   items: [
-  //     { type: 'image', src: 'assets/gallery/nombre-del-evento/img1.jpg', title: 'Descripción' },
-  //     { type: 'video', src: 'assets/gallery/nombre-del-evento/vid1.mp4', thumb: 'assets/gallery/nombre-del-evento/vid1-thumb.jpg', title: 'Video' },
-  //   ]
-  // },
 ];

@@ -9,19 +9,15 @@ import { CommonModule } from '@angular/common';
     <nav class="navbar" [class.scrolled]="scrolled">
       <div class="nav-inner">
         <a href="#" class="nav-logo">
-          <svg class="nav-icon" width="32" height="32" viewBox="0 0 100 100" fill="none">
-            <rect x="50" y="5" width="64" height="64" rx="4" transform="rotate(45 50 50)" fill="none" stroke="#FF0049" stroke-width="7"/>
-            <rect x="50" y="18" width="44" height="44" rx="3" transform="rotate(45 50 50)" fill="none" stroke="#FF0049" stroke-width="5"/>
-            <rect x="50" y="31" width="24" height="24" rx="2" transform="rotate(45 50 50)" fill="none" stroke="#FF0049" stroke-width="4"/>
-          </svg>
+          <img class="nav-icon-img" src="assets/logo.png" alt="CGL" />
           <span>CGL<em>.</em></span>
         </a>
 
         <div class="nav-links" [class.open]="menuOpen">
           <a href="#services" (click)="menuOpen=true">Servicios</a>
           <a href="#gallery" (click)="menuOpen=true">Galería</a>
-          <a href="#contact" class="neon-btn" (click)="menuOpen=true">Contacto</a>
           <a href="#collaborations" (click)="menuOpen=true">Colaboraciones</a>
+          <a href="#contact" class="neon-btn" (click)="menuOpen=true">Contacto</a>
         </div>
 
         <button class="hamburger" (click)="menuOpen = !menuOpen" [class.open]="menuOpen">
@@ -61,7 +57,12 @@ import { CommonModule } from '@angular/common';
       gap: 10px;
       text-decoration: none;
 
-      .nav-icon { flex-shrink: 0; }
+      .nav-icon-img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 6px rgba(255,0,73,0.5));
+      }
 
       span {
         font-family: 'Barlow Condensed', sans-serif;

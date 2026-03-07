@@ -14,11 +14,18 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
           <h2 class="section-title">GALERÍA</h2>
         </div>
 
-        <!-- Filtro de eventos -->
+        <!-- Filtros de categoría -->
+        <div class="cat-filters">
+          <button [class.active]="activeCategory() === 'all'" (click)="setCategory('all')">Todo</button>
+          <button [class.active]="activeCategory() === 'eventos'" (click)="setCategory('eventos')">Eventos</button>
+          <button [class.active]="activeCategory() === 'equipo'" (click)="setCategory('equipo')">Equipo</button>
+        </div>
+
+        <!-- Filtros de eventos -->
         <div class="filters">
           <button [class.active]="activeEventId() === 'all'"
                   (click)="setEvent('all')">Todos</button>
-          <button *ngFor="let ev of events"
+          <button *ngFor="let ev of filteredEvents()"
                   [class.active]="activeEventId() === ev.id"
                   (click)="setEvent(ev.id)">
             {{ ev.name }}
@@ -27,7 +34,7 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
 
         <!-- Vista: TODOS los eventos agrupados -->
         <ng-container *ngIf="activeEventId() === 'all'">
-          <div class="event-block" *ngFor="let ev of events">
+          <div class="event-block" *ngFor="let ev of filteredEvents()">
             <div class="event-header">
               <div class="event-cover" [style.backgroundImage]="'url(' + ev.cover + ')'"></div>
               <div class="event-meta">
@@ -50,7 +57,13 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
                      [style.backgroundImage]="item.thumb ? 'url(' + item.thumb + ')' : 'url(' + item.src + ')'">
                   <div class="fallback-thumb">{{ item.type === 'video' ? '▶' : '🖼' }}</div>
                 </div>
-                <div class="item-overlay"><h4>{{ item.title }}</h4></div>
+                <div class="item-overlay">
+                  <div class="overlay-content">
+                    <span class="overlay-date" *ngIf="item.date">{{ item.date | date:'dd MMM yyyy' }}</span>
+                    <h4>{{ item.title }}</h4>
+                    <p class="overlay-desc" *ngIf="item.description">{{ item.description }}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -78,7 +91,13 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
                      [style.backgroundImage]="item.thumb ? 'url(' + item.thumb + ')' : 'url(' + item.src + ')'">
                   <div class="fallback-thumb">{{ item.type === 'video' ? '▶' : '🖼' }}</div>
                 </div>
-                <div class="item-overlay"><h4>{{ item.title }}</h4></div>
+                <div class="item-overlay">
+                  <div class="overlay-content">
+                    <span class="overlay-date" *ngIf="item.date">{{ item.date | date:'dd MMM yyyy' }}</span>
+                    <h4>{{ item.title }}</h4>
+                    <p class="overlay-desc" *ngIf="item.description">{{ item.description }}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -96,14 +115,23 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
           <video *ngIf="lightboxItem()!.type === 'video'"
                  [src]="lightboxItem()!.src"
                  controls autoplay
-                 style="width:100%; max-height:75vh; border-radius:2px;">
+                 style="width:100%; max-height:70vh; border-radius:2px;">
           </video>
           <img *ngIf="lightboxItem()!.type === 'image'"
                [src]="lightboxItem()!.src"
                [alt]="lightboxItem()!.title"
-               style="max-width:100%; max-height:75vh; object-fit:contain; border-radius:2px;"/>
+               style="max-width:100%; max-height:70vh; object-fit:contain; border-radius:2px;"/>
+
           <div class="lb-info">
-            <h3>{{ lightboxItem()!.title }}</h3>
+            <div class="lb-text">
+              <span class="lb-date" *ngIf="lightboxItem()!.date">
+                {{ lightboxItem()!.date | date:'dd MMM yyyy' }}
+              </span>
+              <h3>{{ lightboxItem()!.title }}</h3>
+              <p class="lb-desc" *ngIf="lightboxItem()!.description">
+                {{ lightboxItem()!.description }}
+              </p>
+            </div>
             <span class="lb-counter">{{ lightboxIndex() + 1 }} / {{ lightboxPool().length }}</span>
           </div>
         </div>
@@ -113,8 +141,36 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
   `,
   styles: [`
     .section { background: var(--bg2); }
-    .section-head { margin-bottom: 40px; }
+    .section-head { margin-bottom: 32px; }
 
+    /* ── Categorías ── */
+    .cat-filters {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+
+      button {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid rgba(255,255,255,0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover { color: var(--text); }
+        &.active {
+          background: rgba(255,0,73,0.12);
+          color: var(--neon);
+          border-color: var(--neon);
+        }
+      }
+    }
+
+    /* ── Filtros de evento ── */
     .filters {
       display: flex;
       gap: 8px;
@@ -204,6 +260,7 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       }
     }
 
+    /* ── Grid ── */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -255,18 +312,44 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       .item-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(17,18,19,0.9) 0%, transparent 60%);
+        background: linear-gradient(to top, rgba(17,18,19,0.95) 0%, rgba(17,18,19,0.2) 60%, transparent 100%);
         opacity: 0;
         transition: opacity 0.3s;
-        display: flex; align-items: flex-end;
-        padding: 12px;
+        display: flex;
+        align-items: flex-end;
+        padding: 14px;
 
-        h4 {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 0.95rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: var(--text);
+        .overlay-content {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+
+          .overlay-date {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--neon);
+          }
+
+          h4 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text);
+            line-height: 1.1;
+          }
+
+          .overlay-desc {
+            font-size: 0.78rem;
+            color: rgba(240,240,242,0.65);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
         }
       }
 
@@ -276,7 +359,7 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       }
     }
 
-    /* Lightbox */
+    /* ── Lightbox ── */
     .lightbox {
       position: fixed;
       inset: 0;
@@ -323,46 +406,88 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
     .lb-content { max-width: 1000px; width: 100%; }
 
     .lb-info {
-      margin-top: 14px;
+      margin-top: 16px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+
+      .lb-text {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .lb-date {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        color: var(--neon);
+        text-transform: uppercase;
+      }
 
       h3 {
         font-family: 'Barlow Condensed', sans-serif;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text);
+        line-height: 1;
       }
+
+      .lb-desc {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 600px;
+        margin-top: 2px;
+      }
+
       .lb-counter {
         font-family: 'DM Mono', monospace;
         font-size: 11px;
         color: var(--muted);
         letter-spacing: 0.2em;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
     }
   `]
 })
 export class GalleryComponent {
   events = GALLERY_EVENTS;
-  activeEventId = signal<string>('all');
-  lightboxItem = signal<MediaItem | null>(null);
-  lightboxIndex = signal<number>(0);
-  lightboxPool = signal<MediaItem[]>([]);
+
+  activeEventId    = signal<string>('all');
+  activeCategory   = signal<string>('all');
+  lightboxItem     = signal<MediaItem | null>(null);
+  lightboxIndex    = signal<number>(0);
+  lightboxPool     = signal<MediaItem[]>([]);
 
   activeEvent = computed<GalleryEvent | null>(() =>
     this.events.find(e => e.id === this.activeEventId()) ?? null
   );
+
+  filteredEvents = computed<GalleryEvent[]>(() =>
+    this.activeCategory() === 'all'
+      ? this.events
+      : this.events.filter(e => e.category === this.activeCategory())
+  );
+
+  setCategory(cat: string) {
+    this.activeCategory.set(cat);
+    this.activeEventId.set('all');
+  }
 
   setEvent(id: string) {
     this.activeEventId.set(id);
   }
 
   openLightbox(eventId: string, item: MediaItem) {
-    const ev = this.events.find(e => e.id === eventId);
+    const ev   = this.events.find(e => e.id === eventId);
     const pool = ev?.items ?? [];
-    const idx = pool.findIndex(i => i.src === item.src);
+    const idx  = pool.findIndex(i => i.src === item.src);
     this.lightboxPool.set(pool);
     this.lightboxIndex.set(idx >= 0 ? idx : 0);
     this.lightboxItem.set(item);

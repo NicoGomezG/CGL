@@ -15,15 +15,17 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <div class="services-grid">
-          <div class="service-card" *ngFor="let s of services; let i = index"
-               [style.--i]="i">
-            <div class="card-index">
-              <span>{{ (i + 1).toString().padStart(2, '0') }}</span>
+          <div class="service-card" *ngFor="let s of services; let i = index" [style.--i]="i">
+            <div class="card-closed">
+              <span class="card-icon">{{ s.icon }}</span>
+              <div class="card-index">{{ (i + 1).toString().padStart(2, '0') }}</div>
             </div>
-            <div class="card-icon">{{ s.icon }}</div>
-            <h3>{{ s.title }}</h3>
-            <p>{{ s.desc }}</p>
-            <div class="card-line"></div>
+            <div class="card-open">
+              <span class="card-icon-sm">{{ s.icon }}</span>
+              <h3>{{ s.title }}</h3>
+              <p>{{ s.desc }}</p>
+              <div class="card-corner"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -33,58 +35,57 @@ import { CommonModule } from '@angular/common';
     .section {
       background: var(--bg);
       position: relative;
-
       &::before {
         content: 'CGL';
         position: absolute;
-        top: 60px;
-        left: 50%;
+        top: 60px; left: 50%;
         transform: translateX(-50%);
         font-family: 'Barlow Condensed', sans-serif;
-        font-size: 20vw;
-        font-weight: 900;
+        font-size: 20vw; font-weight: 900;
         color: rgba(255,0,73,0.03);
         white-space: nowrap;
-        pointer-events: none;
-        z-index: 0;
+        pointer-events: none; z-index: 0;
       }
     }
 
     .section-head {
       text-align: center;
       margin-bottom: 72px;
-      position: relative;
-      z-index: 1;
-
+      position: relative; z-index: 1;
       .section-tag { justify-content: center; }
-
       .section-sub {
         margin-top: 20px;
         color: var(--muted);
         font-size: 1rem;
         max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: auto; margin-right: auto;
         line-height: 1.6;
       }
     }
 
+    /* ── Grid ── */
     .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2px;
-      position: relative;
-      z-index: 1;
+      display: flex;
+      gap: 3px;
+      height: 420px;
+      position: relative; z-index: 1;
     }
 
+    /* ── Card base ── */
     .service-card {
-      background: var(--bg2);
-      padding: 40px 36px;
       position: relative;
+      flex: 0 0 72px;         /* colapsada */
+      height: 100%;
       overflow: hidden;
-      transition: background 0.3s;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition:
+        flex 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s;
       animation: fadeUp 0.6s ease calc(var(--i) * 0.1s + 0.2s) both;
 
+      /* Línea neon arriba al hover */
       &::before {
         content: '';
         position: absolute;
@@ -94,29 +95,67 @@ import { CommonModule } from '@angular/common';
         transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 2;
       }
 
       &:hover {
-        background: var(--bg3);
+        flex: 0 0 320px;       /* expandida */
+        border-color: rgba(255,0,73,0.35);
         &::before { transform: scaleX(1); }
-        .card-index span { color: var(--neon); }
+        .card-closed { opacity: 0; transform: scale(0.8); }
+        .card-open   { opacity: 1; transform: translateX(0); pointer-events: all; }
+      }
+    }
+
+    /* ── Estado cerrado: solo emoji ── */
+    .card-closed {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.25s, transform 0.25s;
+
+      .card-icon {
+        font-size: 2rem;
+        display: block;
+        filter: grayscale(30%);
+        transition: filter 0.3s;
       }
 
       .card-index {
-        margin-bottom: 24px;
-        span {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          letter-spacing: 0.2em;
-          color: var(--muted);
-          transition: color 0.3s;
-        }
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--muted);
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
       }
+    }
 
-      .card-icon {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
+    /* ── Estado abierto: contenido ── */
+    .card-open {
+      position: absolute;
+      inset: 0;
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.35s 0.15s, transform 0.35s 0.15s;
+      pointer-events: none;
+      background: linear-gradient(160deg, var(--bg3) 0%, var(--bg2) 100%);
+      min-width: 280px;
+
+      .card-icon-sm {
+        font-size: 2.2rem;
         display: block;
+        margin-bottom: auto;
+        padding-top: 4px;
       }
 
       h3 {
@@ -125,28 +164,50 @@ import { CommonModule } from '@angular/common';
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 12px;
         color: var(--text);
+        margin-bottom: 10px;
+        margin-top: 24px;
       }
 
       p {
-        font-size: 0.95rem;
-        line-height: 1.6;
+        font-size: 0.9rem;
+        line-height: 1.65;
         color: var(--muted);
       }
 
-      .card-line {
+      .card-corner {
         position: absolute;
         bottom: 0; right: 0;
-        width: 60px; height: 60px;
+        width: 48px; height: 48px;
         border-top: 1px solid var(--border);
         border-left: 1px solid var(--border);
         clip-path: polygon(0 0, 100% 0, 0 100%);
       }
     }
 
-    @media (max-width: 768px) {
-      .services-grid { grid-template-columns: 1fr; gap: 2px; }
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .services-grid {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .service-card {
+        flex: 0 0 64px !important;
+
+        &:hover {
+          flex: 0 0 220px !important;
+          .card-closed { opacity: 0; }
+          .card-open { opacity: 1; transform: none; }
+        }
+
+        .card-closed .card-index {
+          writing-mode: horizontal-tb;
+          transform: none;
+        }
+      }
+
+      .card-open { min-width: unset; }
     }
   `]
 })
@@ -155,7 +216,7 @@ export class ServicesComponent {
     {
       icon: '🏆',
       title: 'Organización de Competencias',
-      desc: 'Organizamos y producimos torneos.'
+      desc: 'Organizamos y producimos torneos esports de alta competencia para marcas y comunidades.'
     },
     {
       icon: '📣',
@@ -170,12 +231,12 @@ export class ServicesComponent {
     {
       icon: '📡',
       title: 'Conexión y distribución de redes',
-      desc: 'Gestionamos uso eficiente de redes.'
+      desc: 'Gestionamos infraestructura y uso eficiente de redes para eventos y recintos.'
     },
     {
       icon: '💻',
-      title: 'Armado de computadoras y setups',
-      desc: 'Identificamos talento emergente y oportunidades de crecimiento con datos y performance analytics.'
+      title: 'Armado de Setups',
+      desc: 'Ensamblamos y configuramos equipos gaming de alto rendimiento para competencias y streamers.'
     },
   ];
 }
