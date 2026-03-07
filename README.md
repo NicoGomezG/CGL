@@ -55,9 +55,6 @@ src: 'https://res.cloudinary.com/TU_CLOUD/image/upload/v1234567890/gallery/img1.
 src: 'https://res.cloudinary.com/TU_CLOUD/video/upload/v1234567890/gallery/vid1.mp4'
 ```
 
-### 👥 Team (team.component.ts)
-Edita el array `members` con nombre, rol, bio, foto y redes.
-
 ### 📬 Contacto (contact.component.ts)
 En `onSubmit()` descomenta e implementa tu opción:
 - **Formspree** (más fácil, sin backend): https://formspree.io
@@ -110,9 +107,6 @@ src/assets/
     img1.jpg
     vid1.mp4
     vid1-thumb.jpg
-  team/
-    alex.jpg
-    sofia.jpg
   hero-player.jpg
 ```
 

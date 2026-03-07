@@ -18,11 +18,10 @@ import { CommonModule } from '@angular/common';
         </a>
 
         <div class="nav-links" [class.open]="menuOpen">
-          <a href="#services" (click)="menuOpen=false">Servicios</a>
-          <a href="#gallery" (click)="menuOpen=false">Galería</a>
-          <a href="#team" (click)="menuOpen=false">Team</a>
-          <a href="#contact" class="neon-btn" (click)="menuOpen=false">Contacto</a>
-          <a href="#collaborations" (click)="menuOpen=false">Colaboraciones</a>
+          <a href="#services" (click)="menuOpen=true">Servicios</a>
+          <a href="#gallery" (click)="menuOpen=true">Galería</a>
+          <a href="#contact" class="neon-btn" (click)="menuOpen=true">Contacto</a>
+          <a href="#collaborations" (click)="menuOpen=true">Colaboraciones</a>
         </div>
 
         <button class="hamburger" (click)="menuOpen = !menuOpen" [class.open]="menuOpen">

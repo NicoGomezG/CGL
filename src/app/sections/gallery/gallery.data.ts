@@ -32,7 +32,7 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
     date: '2024-05-20',
     cover: 'assets/gallery/eventos/cover.jpg',
     items: [
-            { type: 'image', src: 'assets/gallery/eventos/rbhg.jpg', title: 'RedBull Homeground 2024' },
+      { type: 'image', src: 'assets/gallery/eventos/rbhg.jpg', title: 'RedBull Homeground 2024' },
       { type: 'image', src: 'assets/gallery/eventos/img1.jpg', title: 'Panam 2023' },
       { type: 'video', src: 'assets/gallery/eventos/vid1.mov', title: 'RedBull - Homeground X Final Worlds' },
     ]

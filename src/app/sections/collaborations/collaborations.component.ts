@@ -122,7 +122,7 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 48px;
+      height: 80px;
       opacity: 0.5;
       transition: opacity 0.3s;
       flex-shrink: 0;
@@ -130,8 +130,8 @@ import { CommonModule } from '@angular/common';
       &:hover { opacity: 1; }
 
       img {
-        max-height: 40px;
-        max-width: 120px;
+        max-height: 70px;
+        max-width: 200px;
         object-fit: contain;
         filter: grayscale(100%) brightness(1.5);
         transition: filter 0.3s;
@@ -172,6 +172,9 @@ export class CollaborationsComponent {
     { name: 'Universidad Andres Bello',       logo: 'assets/brands/unab.png' },
     { name: 'Universidad Gabriela Mistral',       logo: 'assets/brands/ugm.png' },
     { name: 'ComicCon',    logo: 'assets/brands/comiccon.webp' },
+    
+  ];
+  brandsAlt: { name: string; logo?: string }[] = [
     { name: 'Mega',    logo: 'assets/brands/mega.png' },
     { name: '13 Esports',    logo: 'assets/brands/13s.webp' },
     { name: 'ETC',    logo: 'assets/brands/etc.png' },
@@ -182,17 +185,6 @@ export class CollaborationsComponent {
     { name: 'Wacom',    logo: 'assets/brands/wacom.png' },
     { name: 'Republic of Gamers',    logo: 'assets/brands/rog.png' },
     { name: 'Thermaltake',    logo: 'assets/brands/tt.png' },
-    
-  ];
-  brandsAlt: { name: string; logo?: string }[] = [
-    { name: 'BeFun',  logo: 'assets/brands/befun.png' },
-    { name: 'Cooler Master',      logo: 'assets/brands/coolermaster.png' },
-    { name: 'XBOX',    logo: 'assets/brands/xbox.png' },
-    { name: 'Banco de Chile',    logo: 'assets/brands/bdechile.png' },
-    { name: 'Festigame',      logo: 'assets/brands/festigame.png' },
-    { name: 'Universidad Andres Bello',       logo: 'assets/brands/unab.png' },
-    { name: 'Universidad Gabriela Mistral',       logo: 'assets/brands/ugm.png' },
-    { name: 'ComicCon',    logo: 'assets/brands/comiccon.webp' },
     { name: 'Mega',    logo: 'assets/brands/mega.png' },
     { name: '13 Esports',    logo: 'assets/brands/13s.webp' },
     { name: 'ETC',    logo: 'assets/brands/etc.png' },

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -38,7 +38,7 @@ import { CommonModule } from '@angular/common';
 
           <div class="hero-stats">
             <div class="stat" *ngFor="let s of stats">
-              <span class="stat-value">{{s.value}}</span>
+              <span class="stat-value">{{s.display}}</span>
               <span class="stat-label">{{s.label}}</span>
             </div>
           </div>
@@ -349,10 +349,45 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class HeroComponent {
+export class HeroComponent implements OnInit {
   stats = [
-    { value: '50+', label: 'Competencias' },
-    { value: '120+', label: 'Eventos' },
-    { value: '3M+', label: 'Alcance' },
+    { value: '50+', label: 'Competencias', display: '--' },
+    { value: '120+', label: 'Eventos',      display: '--' },
+    { value: '3M+',  label: 'Alcance',      display: '--' },
   ];
+
+  private CHARS = '0123456789ABCDEF#@!%&';
+
+  ngOnInit() {
+    this.stats.forEach((stat, i) => {
+      setTimeout(() => this.scrambleTo(stat), 800 + i * 300);
+    });
+  }
+
+  private scrambleTo(stat: { value: string; display: string }) {
+    const target = stat.value;
+    const duration = 1200;
+    const start = Date.now();
+
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const revealedChars = Math.floor(progress * target.length);
+
+      let result = '';
+      for (let i = 0; i < target.length; i++) {
+        if (i < revealedChars) {
+          result += target[i];
+        } else {
+          result += this.CHARS[Math.floor(Math.random() * this.CHARS.length)];
+        }
+      }
+      stat.display = result;
+
+      if (progress < 1) requestAnimationFrame(tick);
+      else stat.display = target;
+    };
+
+    requestAnimationFrame(tick);
+  }
 }

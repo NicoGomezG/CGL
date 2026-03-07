@@ -4,7 +4,6 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HeroComponent } from './sections/hero/hero.component';
 import { ServicesComponent } from './sections/services/services.component';
 import { GalleryComponent } from './sections/gallery/gallery.component';
-import { TeamComponent } from './sections/team/team.component';
 import { ContactComponent } from './sections/contact/contact.component';
 import { CollaborationsComponent } from './sections/collaborations/collaborations.component';
 
@@ -17,7 +16,6 @@ import { CollaborationsComponent } from './sections/collaborations/collaboration
     HeroComponent,
     ServicesComponent,
     GalleryComponent,
-    TeamComponent,
     ContactComponent,
     CollaborationsComponent
   ],
