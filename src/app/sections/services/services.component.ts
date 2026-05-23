@@ -15,7 +15,14 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <div class="services-grid">
-          <div class="service-card" *ngFor="let s of services; let i = index" [style.--i]="i">
+          <div
+            class="service-card"
+            *ngFor="let s of services; let i = index"
+            [style.--i]="i"
+            [class.is-open]="activeIndex === i"
+            (mouseenter)="activeIndex = i"
+            (mouseleave)="activeIndex = 0"
+          >
             <div class="card-closed">
               <span class="card-icon">{{ s.icon }}</span>
               <div class="card-index">{{ (i + 1).toString().padStart(2, '0') }}</div>
@@ -74,7 +81,7 @@ import { CommonModule } from '@angular/common';
     /* ── Card base ── */
     .service-card {
       position: relative;
-      flex: 0 0 72px;         /* colapsada */
+      flex: 0 0 72px;
       height: 100%;
       overflow: hidden;
       background: var(--bg2);
@@ -85,7 +92,6 @@ import { CommonModule } from '@angular/common';
         border-color 0.3s;
       animation: fadeUp 0.6s ease calc(var(--i) * 0.1s + 0.2s) both;
 
-      /* Línea neon arriba al hover */
       &::before {
         content: '';
         position: absolute;
@@ -98,16 +104,18 @@ import { CommonModule } from '@angular/common';
         z-index: 2;
       }
 
-      &:hover {
-        flex: 0 0 320px;       /* expandida */
+      /* Estado expandido controlado por clase */
+      &.is-open {
+        flex: 0 0 320px;
         border-color: rgba(255,0,73,0.35);
+
         &::before { transform: scaleX(1); }
         .card-closed { opacity: 0; transform: scale(0.8); }
         .card-open   { opacity: 1; transform: translateX(0); pointer-events: all; }
       }
     }
 
-    /* ── Estado cerrado: solo emoji ── */
+    /* ── Estado cerrado ── */
     .card-closed {
       position: absolute;
       inset: 0;
@@ -122,7 +130,6 @@ import { CommonModule } from '@angular/common';
         font-size: 2rem;
         display: block;
         filter: grayscale(30%);
-        transition: filter 0.3s;
       }
 
       .card-index {
@@ -136,7 +143,7 @@ import { CommonModule } from '@angular/common';
       }
     }
 
-    /* ── Estado abierto: contenido ── */
+    /* ── Estado abierto ── */
     .card-open {
       position: absolute;
       inset: 0;
@@ -195,7 +202,7 @@ import { CommonModule } from '@angular/common';
       .service-card {
         flex: 0 0 64px !important;
 
-        &:hover {
+        &.is-open {
           flex: 0 0 220px !important;
           .card-closed { opacity: 0; }
           .card-open { opacity: 1; transform: none; }
@@ -212,6 +219,8 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ServicesComponent {
+  activeIndex = 0;
+
   services = [
     {
       icon: '🏆',

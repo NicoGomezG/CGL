@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HeroComponent } from './sections/hero/hero.component';
@@ -22,21 +22,4 @@ import { CollaborationsComponent } from './sections/collaborations/collaboration
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  cursorX = 0;
-  cursorY = 0;
-  ringX = 0;
-  ringY = 0;
-
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(e: MouseEvent) {
-    this.cursorX = e.clientX;
-    this.cursorY = e.clientY;
-    setTimeout(() => {
-      this.ringX = e.clientX;
-      this.ringY = e.clientY;
-    }, 80);
-  }
-
-  ngOnInit() {}
-}
+export class AppComponent {}
