@@ -7,6 +7,17 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <section class="section" id="services">
+
+      <!-- Fondo geométrico moderno -->
+      <div class="bg-geo" aria-hidden="true">
+        <div class="geo-line geo-h1"></div>
+        <div class="geo-line geo-h2"></div>
+        <div class="geo-line geo-v1"></div>
+        <div class="geo-corner geo-tl"></div>
+        <div class="geo-corner geo-br"></div>
+        <div class="geo-dot" *ngFor="let d of geoDots" [style.left]="d.x" [style.top]="d.y"></div>
+      </div>
+
       <div class="container">
         <div class="section-head">
           <div class="section-tag">Qué hacemos</div>
@@ -29,6 +40,7 @@ import { CommonModule } from '@angular/common';
             </div>
             <div class="card-open">
               <span class="card-icon-sm">{{ s.icon }}</span>
+              <div class="card-num">{{ (i + 1).toString().padStart(2, '0') }}</div>
               <h3>{{ s.title }}</h3>
               <p>{{ s.desc }}</p>
               <div class="card-corner"></div>
@@ -42,23 +54,65 @@ import { CommonModule } from '@angular/common';
     .section {
       background: var(--bg);
       position: relative;
-      &::before {
-        content: 'CGL';
-        position: absolute;
-        top: 60px; left: 50%;
-        transform: translateX(-50%);
-        font-family: 'Barlow Condensed', sans-serif;
-        font-size: 20vw; font-weight: 900;
-        color: rgba(255,0,73,0.03);
-        white-space: nowrap;
-        pointer-events: none; z-index: 0;
-      }
+      overflow: hidden;
     }
+
+    /* ── Fondo geométrico (reemplaza el "CGL" fantasma) ── */
+    .bg-geo {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+
+    .geo-line {
+      position: absolute;
+      background: rgba(255,0,73,0.04);
+    }
+    .geo-h1 {
+      left: 0; right: 0; top: 35%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,0,73,0.08) 30%, rgba(255,0,73,0.08) 70%, transparent);
+    }
+    .geo-h2 {
+      left: 0; right: 0; top: 70%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,0,73,0.04) 50%, transparent);
+    }
+    .geo-v1 {
+      top: 0; bottom: 0; left: 50%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(255,0,73,0.05) 30%, rgba(255,0,73,0.05) 70%, transparent);
+    }
+
+    .geo-corner {
+      position: absolute;
+      width: 60px; height: 60px;
+      border-color: rgba(255,0,73,0.12);
+      border-style: solid;
+    }
+    .geo-tl {
+      top: 80px; left: 40px;
+      border-width: 1px 0 0 1px;
+    }
+    .geo-br {
+      bottom: 80px; right: 40px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .geo-dot {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: rgba(255,0,73,0.2);
+      transform: translate(-50%, -50%);
+    }
+
+    /* ─────────────────────────────────────── */
+    .container { position: relative; z-index: 1; }
 
     .section-head {
       text-align: center;
       margin-bottom: 72px;
-      position: relative; z-index: 1;
+
       .section-tag { justify-content: center; }
       .section-sub {
         margin-top: 20px;
@@ -75,7 +129,6 @@ import { CommonModule } from '@angular/common';
       display: flex;
       gap: 3px;
       height: 420px;
-      position: relative; z-index: 1;
     }
 
     /* ── Card base ── */
@@ -104,7 +157,6 @@ import { CommonModule } from '@angular/common';
         z-index: 2;
       }
 
-      /* Estado expandido controlado por clase */
       &.is-open {
         flex: 0 0 320px;
         border-color: rgba(255,0,73,0.35);
@@ -147,7 +199,7 @@ import { CommonModule } from '@angular/common';
     .card-open {
       position: absolute;
       inset: 0;
-      padding: 36px 28px;
+      padding: 32px 28px 28px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -155,7 +207,10 @@ import { CommonModule } from '@angular/common';
       transform: translateX(20px);
       transition: opacity 0.35s 0.15s, transform 0.35s 0.15s;
       pointer-events: none;
-      background: linear-gradient(160deg, var(--bg3) 0%, var(--bg2) 100%);
+      /* Gradiente diagonal más rico */
+      background:
+        linear-gradient(135deg, rgba(255,0,73,0.08) 0%, transparent 40%),
+        linear-gradient(160deg, var(--bg3) 0%, var(--bg2) 100%);
       min-width: 280px;
 
       .card-icon-sm {
@@ -163,6 +218,15 @@ import { CommonModule } from '@angular/common';
         display: block;
         margin-bottom: auto;
         padding-top: 4px;
+      }
+
+      .card-num {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        color: rgba(255,0,73,0.4);
+        margin-bottom: 6px;
+        margin-top: 20px;
       }
 
       h3 {
@@ -173,11 +237,11 @@ import { CommonModule } from '@angular/common';
         letter-spacing: 0.05em;
         color: var(--text);
         margin-bottom: 10px;
-        margin-top: 24px;
+        line-height: 1.1;
       }
 
       p {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         line-height: 1.65;
         color: var(--muted);
       }
@@ -185,10 +249,9 @@ import { CommonModule } from '@angular/common';
       .card-corner {
         position: absolute;
         bottom: 0; right: 0;
-        width: 48px; height: 48px;
-        border-top: 1px solid var(--border);
-        border-left: 1px solid var(--border);
-        clip-path: polygon(0 0, 100% 0, 0 100%);
+        width: 0; height: 0;
+        border-left: 20px solid transparent;
+        border-bottom: 20px solid rgba(255,0,73,0.25);
       }
     }
 
@@ -216,10 +279,25 @@ import { CommonModule } from '@angular/common';
 
       .card-open { min-width: unset; }
     }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   `]
 })
 export class ServicesComponent {
   activeIndex = 0;
+
+  // Puntos de intersección de la grilla decorativa
+  geoDots = [
+    { x: '50%', y: '35%' },
+    { x: '50%', y: '70%' },
+    { x: '25%', y: '35%' },
+    { x: '75%', y: '35%' },
+    { x: '25%', y: '70%' },
+    { x: '75%', y: '70%' },
+  ];
 
   services = [
     {

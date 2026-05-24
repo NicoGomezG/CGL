@@ -1,6 +1,6 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
+import { GALLERY_EVENTS, MediaItem } from './gallery.data';
 
 @Component({
   selector: 'app-gallery',
@@ -14,125 +14,80 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
           <h2 class="section-title">GALERÍA</h2>
         </div>
 
-        <!-- Filtros de categoría -->
+        <!-- Filtro de categoría simple -->
         <div class="cat-filters">
-          <button [class.active]="activeCategory() === 'all'" (click)="setCategory('all')">Todo</button>
+          <button [class.active]="activeCategory() === 'all'"     (click)="setCategory('all')">Todo</button>
           <button [class.active]="activeCategory() === 'eventos'" (click)="setCategory('eventos')">Eventos</button>
-          <button [class.active]="activeCategory() === 'equipo'" (click)="setCategory('equipo')">Equipo</button>
+          <button [class.active]="activeCategory() === 'equipo'"  (click)="setCategory('equipo')">Equipo</button>
         </div>
 
-        <!-- Filtros de eventos -->
-        <div class="filters">
-          <button [class.active]="activeEventId() === 'all'"
-                  (click)="setEvent('all')">Todos</button>
-          <button *ngFor="let ev of filteredEvents()"
-                  [class.active]="activeEventId() === ev.id"
-                  (click)="setEvent(ev.id)">
-            {{ ev.name }}
-          </button>
-        </div>
-
-        <!-- Vista: TODOS los eventos agrupados -->
-        <ng-container *ngIf="activeEventId() === 'all'">
-          <div class="event-block" *ngFor="let ev of filteredEvents()">
-            <div class="event-header">
-              <div class="event-cover" [style.backgroundImage]="'url(' + ev.cover + ')'"></div>
-              <div class="event-meta">
-                <span class="event-date">{{ ev.date | date:'MMMM yyyy' }}</span>
-                <h3>{{ ev.name }}</h3>
-                <span class="event-count">{{ ev.items.length }} archivos</span>
-              </div>
-              <button class="event-filter-btn" (click)="setEvent(ev.id)">
-                Ver solo este →
-              </button>
+        <!-- Grilla unificada -->
+        <div class="gallery-grid">
+          <div class="gallery-item"
+               *ngFor="let item of visibleItems(); let i = index"
+               [class.wide]="i % 7 === 0"
+               (click)="openLightbox(i)">
+            <div class="video-badge" *ngIf="item.type === 'video'">▶</div>
+            <div class="item-thumb"
+                 [style.backgroundImage]="'url(' + (item.thumb || item.src) + ')'">
             </div>
-
-            <div class="gallery-grid">
-              <div class="gallery-item"
-                   *ngFor="let item of ev.items; let i = index"
-                   [class.wide]="i === 0"
-                   (click)="openLightbox(ev.id, item)">
-                <div class="video-badge" *ngIf="item.type === 'video'">▶</div>
-                <div class="item-thumb"
-                     [style.backgroundImage]="item.thumb ? 'url(' + item.thumb + ')' : 'url(' + item.src + ')'">
-                  <div class="fallback-thumb">{{ item.type === 'video' ? '▶' : '🖼' }}</div>
-                </div>
-                <div class="item-overlay">
-                  <div class="overlay-content">
-                    <span class="overlay-date" *ngIf="item.date">{{ item.date | date:'dd MMM yyyy' }}</span>
-                    <h4>{{ item.title }}</h4>
-                    <p class="overlay-desc" *ngIf="item.description">{{ item.description }}</p>
-                  </div>
-                </div>
+            <div class="item-overlay">
+              <div class="overlay-content">
+                <span class="overlay-date" *ngIf="item.date">{{ item.date | date:'dd MMM yyyy' }}</span>
+                <h4>{{ item.title }}</h4>
+                <p class="overlay-desc" *ngIf="item.description">{{ item.description }}</p>
               </div>
             </div>
           </div>
-        </ng-container>
-
-        <!-- Vista: evento individual -->
-        <ng-container *ngIf="activeEventId() !== 'all' && activeEvent()">
-          <div class="event-block">
-            <div class="event-header">
-              <div class="event-cover" [style.backgroundImage]="'url(' + activeEvent()!.cover + ')'"></div>
-              <div class="event-meta">
-                <span class="event-date">{{ activeEvent()!.date | date:'MMMM yyyy' }}</span>
-                <h3>{{ activeEvent()!.name }}</h3>
-                <span class="event-count">{{ activeEvent()!.items.length }} archivos</span>
-              </div>
-            </div>
-
-            <div class="gallery-grid">
-              <div class="gallery-item"
-                   *ngFor="let item of activeEvent()!.items; let i = index"
-                   [class.wide]="i === 0"
-                   (click)="openLightbox(activeEvent()!.id, item)">
-                <div class="video-badge" *ngIf="item.type === 'video'">▶</div>
-                <div class="item-thumb"
-                     [style.backgroundImage]="item.thumb ? 'url(' + item.thumb + ')' : 'url(' + item.src + ')'">
-                  <div class="fallback-thumb">{{ item.type === 'video' ? '▶' : '🖼' }}</div>
-                </div>
-                <div class="item-overlay">
-                  <div class="overlay-content">
-                    <span class="overlay-date" *ngIf="item.date">{{ item.date | date:'dd MMM yyyy' }}</span>
-                    <h4>{{ item.title }}</h4>
-                    <p class="overlay-desc" *ngIf="item.description">{{ item.description }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
+        </div>
       </div>
 
-      <!-- Lightbox con navegación -->
-      <div class="lightbox" [class.active]="lightboxItem()" (click)="closeLightbox()">
+      <!-- Lightbox con slideshow automático -->
+      <div class="lightbox" [class.active]="lightboxOpen()" (click)="closeLightbox()">
         <button class="lb-close" (click)="closeLightbox()">✕</button>
-        <button class="lb-prev" (click)="navigate(-1); $event.stopPropagation()">‹</button>
-        <button class="lb-next" (click)="navigate(1); $event.stopPropagation()">›</button>
 
-        <div class="lb-content" (click)="$event.stopPropagation()" *ngIf="lightboxItem()">
-          <video *ngIf="lightboxItem()!.type === 'video'"
-                 [src]="lightboxItem()!.src"
+        <!-- Controles de navegación -->
+        <button class="lb-prev" (click)="navigate(-1); $event.stopPropagation()">‹</button>
+        <button class="lb-next" (click)="navigate(1);  $event.stopPropagation()">›</button>
+
+        <div class="lb-content" (click)="$event.stopPropagation()" *ngIf="currentItem()">
+
+          <video *ngIf="currentItem()!.type === 'video'"
+                 [src]="currentItem()!.src"
                  controls autoplay
-                 style="width:100%; max-height:70vh; border-radius:2px;">
+                 style="width:100%; max-height:68vh; border-radius:2px;">
           </video>
-          <img *ngIf="lightboxItem()!.type === 'image'"
-               [src]="lightboxItem()!.src"
-               [alt]="lightboxItem()!.title"
-               style="max-width:100%; max-height:70vh; object-fit:contain; border-radius:2px;"/>
+          <img *ngIf="currentItem()!.type === 'image'"
+               [src]="currentItem()!.src"
+               [alt]="currentItem()!.title"
+               style="max-width:100%; max-height:68vh; object-fit:contain; display:block; margin:0 auto;"/>
 
           <div class="lb-info">
             <div class="lb-text">
-              <span class="lb-date" *ngIf="lightboxItem()!.date">
-                {{ lightboxItem()!.date | date:'dd MMM yyyy' }}
+              <span class="lb-date" *ngIf="currentItem()!.date">
+                {{ currentItem()!.date | date:'dd MMM yyyy' }}
               </span>
-              <h3>{{ lightboxItem()!.title }}</h3>
-              <p class="lb-desc" *ngIf="lightboxItem()!.description">
-                {{ lightboxItem()!.description }}
+              <h3>{{ currentItem()!.title }}</h3>
+              <p class="lb-desc" *ngIf="currentItem()!.description">
+                {{ currentItem()!.description }}
               </p>
             </div>
-            <span class="lb-counter">{{ lightboxIndex() + 1 }} / {{ lightboxPool().length }}</span>
+
+            <div class="lb-controls">
+              <!-- Slideshow toggle -->
+              <button class="lb-play" (click)="toggleSlideshow(); $event.stopPropagation()"
+                      [class.playing]="slideshowActive()">
+                <span *ngIf="!slideshowActive()">▶ Auto</span>
+                <span *ngIf="slideshowActive()">⏸ Auto</span>
+              </button>
+
+              <!-- Progress bar del timer -->
+              <div class="lb-progress" *ngIf="slideshowActive()">
+                <div class="lb-progress-fill" [style.animation-duration]="slideshowDelay + 'ms'"></div>
+              </div>
+
+              <span class="lb-counter">{{ lightboxIndex() + 1 }} / {{ visibleItems().length }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -141,25 +96,26 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
   `,
   styles: [`
     .section { background: var(--bg2); }
-    .section-head { margin-bottom: 32px; }
+    .section-head { margin-bottom: 28px; }
 
-    /* ── Categorías ── */
+    /* ── Filtros ── */
     .cat-filters {
       display: flex;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 32px;
 
       button {
         font-family: 'DM Mono', monospace;
         font-size: 10px;
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        padding: 5px 14px;
+        padding: 6px 16px;
         background: transparent;
         color: var(--muted);
         border: 1px solid rgba(255,255,255,0.08);
         cursor: pointer;
         transition: all 0.2s;
+        clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
 
         &:hover { color: var(--text); }
         &.active {
@@ -170,105 +126,15 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       }
     }
 
-    /* ── Filtros de evento ── */
-    .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 48px;
-
-      button {
-        font-family: 'DM Mono', monospace;
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        padding: 7px 18px;
-        background: transparent;
-        color: var(--muted);
-        border: 1px solid rgba(255,255,255,0.1);
-        cursor: pointer;
-        transition: all 0.2s;
-        white-space: nowrap;
-        clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
-
-        &:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-        &.active { background: var(--neon); color: #111; border-color: var(--neon); }
-      }
-    }
-
-    .event-block { margin-bottom: 64px; }
-
-    .event-header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 12px;
-      padding: 14px 20px;
-      background: var(--bg3);
-      border-left: 3px solid var(--neon);
-      flex-wrap: wrap;
-
-      .event-cover {
-        width: 60px; height: 60px;
-        background-size: cover;
-        background-position: center;
-        background-color: var(--surface);
-        flex-shrink: 0;
-        clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
-      }
-
-      .event-meta {
-        flex: 1;
-        min-width: 120px;
-
-        .event-date {
-          display: block;
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--neon);
-          margin-bottom: 3px;
-        }
-        h3 {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 1.4rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: var(--text);
-          line-height: 1;
-          margin-bottom: 3px;
-        }
-        .event-count {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          color: var(--muted);
-        }
-      }
-
-      .event-filter-btn {
-        font-family: 'DM Mono', monospace;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--muted);
-        padding: 8px 16px;
-        cursor: pointer;
-        transition: all 0.2s;
-        &:hover { color: var(--neon); border-color: var(--neon); }
-      }
-    }
-
-    /* ── Grid ── */
+    /* ── Grilla ── */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: 190px;
+      grid-auto-rows: 200px;
       gap: 4px;
 
       @media (max-width: 900px) { grid-template-columns: repeat(3, 1fr); }
-      @media (max-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+      @media (max-width: 600px) { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
     }
 
     .gallery-item {
@@ -299,14 +165,8 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
         width: 100%; height: 100%;
         background-size: cover;
         background-position: center;
+        background-color: var(--bg3);
         transition: transform 0.4s ease;
-
-        .fallback-thumb {
-          width: 100%; height: 100%;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 2rem; opacity: 0.2;
-          background: var(--bg3);
-        }
       }
 
       .item-overlay {
@@ -409,15 +269,17 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       margin-top: 16px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 24px;
       padding-top: 14px;
       border-top: 1px solid var(--border);
+      flex-wrap: wrap;
 
       .lb-text {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 4px;
+        flex: 1;
       }
 
       .lb-date {
@@ -430,7 +292,7 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
 
       h3 {
         font-family: 'Barlow Condensed', sans-serif;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text);
@@ -438,71 +300,163 @@ import { GALLERY_EVENTS, GalleryEvent, MediaItem } from './gallery.data';
       }
 
       .lb-desc {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: var(--muted);
         line-height: 1.5;
-        max-width: 600px;
-        margin-top: 2px;
+        max-width: 500px;
       }
+    }
 
-      .lb-counter {
-        font-family: 'DM Mono', monospace;
-        font-size: 11px;
-        color: var(--muted);
-        letter-spacing: 0.2em;
-        white-space: nowrap;
-        flex-shrink: 0;
+    .lb-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Botón play/pause slideshow */
+    .lb-play {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+
+      &:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+      &.playing {
+        border-color: var(--neon);
+        color: var(--neon);
+        background: rgba(255,0,73,0.08);
       }
+    }
+
+    /* Barra de progreso del timer */
+    .lb-progress {
+      width: 80px;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+
+      .lb-progress-fill {
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 100%;
+        background: var(--neon);
+        transform-origin: left;
+        animation: progressBar linear forwards;
+        box-shadow: 0 0 6px rgba(255,0,73,0.5);
+      }
+    }
+
+    .lb-counter {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+    }
+
+    @keyframes progressBar {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
     }
   `]
 })
-export class GalleryComponent {
-  events = GALLERY_EVENTS;
+export class GalleryComponent implements OnDestroy {
 
-  activeEventId    = signal<string>('all');
-  activeCategory   = signal<string>('all');
-  lightboxItem     = signal<MediaItem | null>(null);
-  lightboxIndex    = signal<number>(0);
-  lightboxPool     = signal<MediaItem[]>([]);
-
-  activeEvent = computed<GalleryEvent | null>(() =>
-    this.events.find(e => e.id === this.activeEventId()) ?? null
+  // Todas las imágenes de todos los eventos en un array plano
+  allItems: (MediaItem & { eventName: string; category: string })[] = GALLERY_EVENTS.flatMap(ev =>
+    ev.items.map(item => ({ ...item, eventName: ev.name, category: ev.category }))
   );
 
-  filteredEvents = computed<GalleryEvent[]>(() =>
-    this.activeCategory() === 'all'
-      ? this.events
-      : this.events.filter(e => e.category === this.activeCategory())
-  );
+  activeCategory  = signal<string>('all');
+  lightboxOpen    = signal<boolean>(false);
+  lightboxIndex   = signal<number>(0);
+  slideshowActive = signal<boolean>(false);
+  slideshowDelay  = 4000; // ms entre fotos
+
+  private slideshowTimer: any = null;
+  private progressKey = 0; // fuerza re-render de la barra
+
+  visibleItems = computed<(MediaItem & { eventName: string; category: string })[]>(() => {
+    const filtered = this.activeCategory() === 'all'
+      ? this.allItems
+      : this.allItems.filter(i => i.category === this.activeCategory());
+
+    // Ordena por date descendente (más reciente primero). Items sin date van al final.
+    return [...filtered].sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  });
+
+  currentItem = computed(() => {
+    const items = this.visibleItems();
+    const idx   = this.lightboxIndex();
+    return items[idx] ?? null;
+  });
 
   setCategory(cat: string) {
     this.activeCategory.set(cat);
-    this.activeEventId.set('all');
+    this.stopSlideshow();
+    this.lightboxOpen.set(false);
   }
 
-  setEvent(id: string) {
-    this.activeEventId.set(id);
-  }
-
-  openLightbox(eventId: string, item: MediaItem) {
-    const ev   = this.events.find(e => e.id === eventId);
-    const pool = ev?.items ?? [];
-    const idx  = pool.findIndex(i => i.src === item.src);
-    this.lightboxPool.set(pool);
-    this.lightboxIndex.set(idx >= 0 ? idx : 0);
-    this.lightboxItem.set(item);
+  openLightbox(index: number) {
+    this.lightboxIndex.set(index);
+    this.lightboxOpen.set(true);
     document.body.style.overflow = 'hidden';
   }
 
-  navigate(dir: number) {
-    const pool = this.lightboxPool();
-    const next = (this.lightboxIndex() + dir + pool.length) % pool.length;
-    this.lightboxIndex.set(next);
-    this.lightboxItem.set(pool[next]);
+  closeLightbox() {
+    this.stopSlideshow();
+    this.lightboxOpen.set(false);
+    document.body.style.overflow = '';
   }
 
-  closeLightbox() {
-    this.lightboxItem.set(null);
-    document.body.style.overflow = '';
+  navigate(dir: number) {
+    const len  = this.visibleItems().length;
+    const next = (this.lightboxIndex() + dir + len) % len;
+    this.lightboxIndex.set(next);
+    // Si el slideshow está activo, reinicia el timer para que la barra empiece de 0
+    if (this.slideshowActive()) this.startSlideshow();
+  }
+
+  toggleSlideshow() {
+    if (this.slideshowActive()) {
+      this.stopSlideshow();
+    } else {
+      this.startSlideshow();
+      this.slideshowActive.set(true);
+    }
+  }
+
+  private startSlideshow() {
+    this.stopSlideshow();
+    this.slideshowActive.set(true);
+    this.slideshowTimer = setInterval(() => {
+      this.navigate(1);
+    }, this.slideshowDelay);
+  }
+
+  private stopSlideshow() {
+    if (this.slideshowTimer) {
+      clearInterval(this.slideshowTimer);
+      this.slideshowTimer = null;
+    }
+    this.slideshowActive.set(false);
+  }
+
+  ngOnDestroy() {
+    this.stopSlideshow();
   }
 }
