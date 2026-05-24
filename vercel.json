@@ -1,12 +1,7 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/cgl-producciones/browser",
+  "buildCommand": "npm run build -- --output-path=dist/app",
+  "outputDirectory": "dist/app/browser",
   "framework": null,
-  "build": {
-    "env": {
-      "NODE_VERSION": "18"
-    }
-  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
