@@ -1,8 +1,5 @@
 {
-  "buildCommand": "ng build --configuration production",
-  "outputDirectory": "dist/tu-proyecto/browser",
-  "framework": null,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "buildCommand": "ng build",
+  "outputDirectory": "dist/cgl-producciones/browser",
+  "framework": null
 }
