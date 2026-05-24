@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build -- --output-path=dist/app",
-  "outputDirectory": "dist/app/browser",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/cgl-producciones/browser",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
