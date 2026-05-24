@@ -1,5 +1,10 @@
 {
-  "buildCommand": "ng build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist/cgl-producciones/browser",
-  "framework": null
+  "framework": null,
+  "build": {
+    "env": {
+      "NODE_VERSION": "18"
+    }
+  }
 }
