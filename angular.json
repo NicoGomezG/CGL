@@ -54,8 +54,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": { "buildTarget": "esports-agency:build:production" },
-            "development": { "buildTarget": "esports-agency:build:development" }
+            "production": { "buildTarget": "cgl-producciones:build:production" },
+            "development": { "buildTarget": "cgl-producciones:build:development" }
           },
           "defaultConfiguration": "development"
         }
