@@ -343,6 +343,8 @@ export class CollaborationsComponent {
     { name: 'Universidad Andres Bello',  logo: 'assets/brands/unab.png' },
     { name: 'Universidad Gabriela Mistral', logo: 'assets/brands/ugm.png' },
     { name: 'ComicCon',                  logo: 'assets/brands/comiccon.webp' },
+    { name: 'Red Bull',              logo: 'assets/brands/redbull.png' },
+    
   ];
 
   brandsAlt: { name: string; logo?: string }[] = [
