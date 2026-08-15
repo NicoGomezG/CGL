@@ -330,6 +330,19 @@ import { CommonModule } from '@angular/common';
       .cs-item { padding-right: 20px; }
       .cs-divider { margin: 0 20px 0 0; }
     }
+
+    @media (max-width: 560px) {
+      .collab-stats { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
+      .cs-item {
+        width: 100%;
+        padding: 0 0 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .cs-divider { display: none; }
+      .cs-desc { padding-top: 16px; border-top: none; }
+      .collab-footer { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .collab-footer .cf-line { display: none; }
+    }
   `]
 })
 export class CollaborationsComponent {

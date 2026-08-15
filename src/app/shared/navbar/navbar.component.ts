@@ -49,6 +49,8 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      @media (max-width: 640px) { padding: 0 20px; }
     }
 
     .nav-logo {
@@ -122,7 +124,7 @@ import { CommonModule } from '@angular/common';
         position: fixed;
         top: 0; right: -100%;
         height: 100vh;
-        width: 280px;
+        width: min(280px, 85vw);
         background: var(--bg2);
         border-left: 1px solid var(--border);
         flex-direction: column;
@@ -130,10 +132,16 @@ import { CommonModule } from '@angular/common';
         padding: 40px;
         gap: 32px;
         transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
 
         &.open { right: 0; }
         a { font-size: 18px; color: var(--text); }
       }
+    }
+
+    @media (max-width: 360px) {
+      .nav-logo span { font-size: 1.6rem; }
+      .nav-logo .nav-icon-img { width: 30px; height: 30px; }
     }
   `]
 })

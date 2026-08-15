@@ -280,6 +280,15 @@ import { CommonModule } from '@angular/common';
       .card-open { min-width: unset; }
     }
 
+    @media (max-width: 480px) {
+      .service-card.is-open { flex: 0 0 200px !important; }
+      .card-open {
+        padding: 24px 20px 20px;
+        h3 { font-size: 1.3rem; }
+        p { font-size: 0.82rem; }
+      }
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }

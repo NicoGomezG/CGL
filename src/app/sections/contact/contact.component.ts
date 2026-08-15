@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-contact',
@@ -12,7 +13,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
       <div class="container">
         <div class="contact-wrap">
 
-          <div class="contact-left">
+          <!-- ── Columna 1: info ── -->
+          <div class="contact-info">
             <div class="section-tag">Hablémos</div>
             <h2 class="section-title">Contáctanos</h2>
             <p class="contact-desc">
@@ -31,7 +33,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
             </div>
           </div>
 
-          <div class="contact-right">
+          <!-- ── Columna 2: formulario ── -->
+          <div class="contact-form-col">
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
               <div class="form-row">
@@ -59,7 +62,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
               <div class="form-field" [class.error]="isInvalid('message')">
                 <label>Mensaje *</label>
                 <textarea formControlName="message" rows="5"
-                          placeholder="Cuéntanos sobre ti y tus objetivos..."></textarea>
+                          placeholder="Cuéntanos en qué podríamos ayudarte"></textarea>
                 <span class="err-msg" *ngIf="isInvalid('message')">Mínimo 20 caracteres</span>
               </div>
 
@@ -71,8 +74,35 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
                 <div class="success-msg" *ngIf="success">
                   ✓ Mensaje enviado. Te contactamos pronto.
                 </div>
+                <div class="error-msg-box" *ngIf="error">
+                  ✕ No pudimos enviar tu mensaje. Intenta de nuevo o escríbenos por WhatsApp.
+                </div>
               </div>
             </form>
+          </div>
+
+          <!-- ── Columna 3: Discord ── -->
+          <div class="contact-discord">
+            <div class="section-tag">Comunidad</div>
+            <h3 class="discord-title">Únete a Discord</h3>
+            <p class="discord-desc">
+              Habla directo con el equipo, entérate de torneos y activaciones en tiempo real.
+            </p>
+
+            <div class="discord-widget-frame">
+              <iframe
+                [src]="discordWidgetUrl"
+                width="100%" height="300"
+                allowtransparency="true"
+                frameborder="0"
+                sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                loading="lazy">
+              </iframe>
+            </div>
+
+            <a href="https://discord.gg/cpxzAP3BGZ" target="_blank" rel="noopener" class="neon-btn discord-join-btn">
+              Unirse al servidor →
+            </a>
           </div>
 
         </div>
@@ -96,11 +126,16 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 
     .contact-wrap {
       display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 80px;
+      grid-template-columns: 0.85fr 1.15fr 0.8fr;
+      gap: 48px;
       align-items: start;
 
-      @media (max-width: 900px) {
+      @media (max-width: 1180px) {
+        grid-template-columns: 1fr 1.2fr;
+        .contact-discord { grid-column: 1 / -1; }
+      }
+
+      @media (max-width: 780px) {
         grid-template-columns: 1fr;
         gap: 48px;
       }
@@ -149,8 +184,49 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
           font-size: 1rem;
           font-weight: 600;
           color: var(--text);
+          word-break: break-word;
         }
       }
+    }
+
+    /* ── Columna Discord ── */
+    .contact-discord {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .discord-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .discord-desc {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .discord-widget-frame {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+      overflow: hidden;
+      line-height: 0;
+      margin-bottom: 20px;
+
+      iframe { display: block; }
+    }
+
+    .discord-join-btn {
+      align-self: flex-start;
+      width: 100%;
+      text-align: center;
     }
 
     /* Form styles */
@@ -161,6 +237,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
 
       @media (max-width: 600px) { padding: 24px; }
+      @media (max-width: 400px) { padding: 20px 16px; }
     }
 
     .form-row {
@@ -243,12 +320,20 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
       color: var(--neon);
       letter-spacing: 0.1em;
     }
+
+    .error-msg-box {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: #ff5470;
+      letter-spacing: 0.05em;
+    }
   `]
 })
 export class ContactComponent {
   form: FormGroup;
   loading = false;
   success = false;
+  error = false;
 
   serviceOptions = [
     'Activaciones Gamer',
@@ -264,13 +349,23 @@ export class ContactComponent {
     { icon: '📍', label: 'Ubicación', value: 'Santiago, Chile' },
   ];
 
-  constructor(private fb: FormBuilder) {
+  // ID numérico de tu servidor de Discord (Ajustes del servidor → Widget →
+  // activa "Habilitar widget del servidor" y copia el "ID del servidor" ahí mismo).
+  private readonly DISCORD_SERVER_ID = '296252426921443339';
+
+  discordWidgetUrl: SafeResourceUrl;
+
+  constructor(private fb: FormBuilder, private sanitizer: DomSanitizer) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       service: ['', Validators.required],
       message: ['', [Validators.required, Validators.minLength(20)]]
     });
+
+    this.discordWidgetUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://discord.com/widget?id=${this.DISCORD_SERVER_ID}&theme=dark`
+    );
   }
 
   isInvalid(field: string): boolean {
@@ -278,31 +373,30 @@ export class ContactComponent {
     return !!(c && c.invalid && c.touched);
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
     this.loading = true;
+    this.error = false;
 
-    // ─── INTEGRA TU BACKEND O SERVICIO DE EMAIL AQUÍ ─────────────────────
-    // Opción A: Endpoint propio de Node/Express
-    // fetch('/api/contact', { method: 'POST', body: JSON.stringify(this.form.value) })
-    //
-    // Opción B: Formspree (sin backend)
-    // fetch('https://formspree.io/f/TU_FORM_ID', { method: 'POST', ... })
-    //
-    // Opción C: EmailJS (client-side)
-    // emailjs.send('service_id', 'template_id', this.form.value)
-    // ─────────────────────────────────────────────────────────────────────
+    try {
+      const res = await fetch('/api/contact-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.form.value),
+      });
+      if (!res.ok) throw new Error('request failed');
 
-    // Simulación por ahora:
-    setTimeout(() => {
-      console.log('Form data:', this.form.value);
-      this.loading = false;
       this.success = true;
       this.form.reset();
       setTimeout(() => this.success = false, 5000);
-    }, 1200);
+    } catch {
+      this.error = true;
+      setTimeout(() => this.error = false, 5000);
+    } finally {
+      this.loading = false;
+    }
   }
 }

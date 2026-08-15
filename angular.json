@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "esports-agency": {
+    "cgl-producciones": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {

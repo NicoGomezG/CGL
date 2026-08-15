@@ -8,9 +8,13 @@ import { CommonModule } from '@angular/common';
   template: `
     <section class="hero" id="home">
 
-      <div class="hero-bg"></div>
+      <div class="hero-bg">
+        <!-- Fotos reales de eventos cubriendo todo el fondo, en blanco y negro -->
+        <div class="mosaic mosaic-mono" aria-hidden="true">
+          <div class="mosaic-tile" *ngFor="let t of mosaicTiles" [style.backgroundImage]="'url(' + t.img + ')'"></div>
+        </div>
+      </div>
       <div class="hero-grid"></div>
-      <div class="scanline"></div>
       <div class="diagonal-slash"></div>
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
@@ -116,22 +120,46 @@ import { CommonModule } from '@angular/common';
     .hero-bg {
       position: absolute; inset: 0;
       z-index: 0;
-
-      &::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: url('/assets/banner.png') center 30% / cover no-repeat;
-        opacity: 0.22;
-      }
+      overflow: hidden;
 
       &::after {
         content: '';
         position: absolute; inset: 0;
         background:
-          linear-gradient(to right,  var(--bg) 0%, transparent 40%),
-          linear-gradient(to left,   var(--bg) 0%, transparent 40%),
-          linear-gradient(to bottom, transparent 30%, rgba(10,10,11,0.85) 100%);
+          linear-gradient(to right,  var(--bg) 0%, var(--bg) 10%, rgba(11,11,12,0.55) 40%, transparent 60%),
+          linear-gradient(to left,   var(--bg) 0%, transparent 26%),
+          linear-gradient(to bottom, transparent 22%, rgba(10,10,11,0.92) 100%);
       }
+    }
+
+    /* ── Mosaico fotográfico de fondo: fotos reales de eventos,
+       cubriendo todo el hero en blanco y negro ── */
+    .mosaic {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 4px;
+    }
+
+    .mosaic-tile {
+      background-size: cover;
+      background-position: center;
+      background-color: var(--bg3);
+      border-radius: 3px;
+    }
+
+    .mosaic-mono .mosaic-tile {
+      filter: grayscale(1) contrast(1.05) brightness(0.5);
+      opacity: 0.32;
+    }
+
+    @media (max-width: 768px) {
+      .mosaic { grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(9, 1fr); gap: 3px; }
+      .mosaic-mono .mosaic-tile { opacity: 0.22; }
+    }
+    @media (max-width: 480px) {
+      .mosaic-mono .mosaic-tile { opacity: 0.16; }
     }
 
     .hero-grid {
@@ -140,14 +168,6 @@ import { CommonModule } from '@angular/common';
         linear-gradient(rgba(255,0,73,0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,0,73,0.025) 1px, transparent 1px);
       background-size: 50px 50px;
-    }
-
-    .scanline {
-      position: absolute; left: 0; right: 0; top: 0;
-      height: 1px; z-index: 1;
-      background: linear-gradient(90deg, transparent, var(--neon), transparent);
-      animation: scan 10s linear infinite;
-      opacity: 0.15;
     }
 
     .diagonal-slash {
@@ -387,7 +407,6 @@ import { CommonModule } from '@angular/common';
         clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
         flex-shrink: 0;
         box-shadow: 0 0 6px var(--neon);
-        animation: blink 2.5s ease infinite;
       }
     }
 
@@ -428,7 +447,6 @@ import { CommonModule } from '@angular/common';
         &.active {
           background: var(--neon); border-color: var(--neon);
           box-shadow: 0 0 8px var(--neon);
-          animation: blink 2s ease infinite;
         }
       }
       .sp-label {
@@ -448,6 +466,9 @@ import { CommonModule } from '@angular/common';
     .stats-inner {
       max-width: 1280px; margin: 0 auto;
       padding: 0 40px; display: flex; align-items: stretch;
+      flex-wrap: wrap;
+
+      @media (max-width: 640px) { padding: 0 20px; }
     }
 
     .stat {
@@ -492,24 +513,10 @@ import { CommonModule } from '@angular/common';
       .sh-line {
         width: 1px; height: 40px;
         background: linear-gradient(to bottom, rgba(255,0,73,0.4), transparent);
-        animation: scrollPulse 2s ease infinite;
+        opacity: 0.7;
       }
     }
 
-    @keyframes scan {
-      0%   { top: 0; opacity: 0; }
-      10%  { opacity: 0.15; }
-      90%  { opacity: 0.15; }
-      100% { top: 100%; opacity: 0; }
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -532,6 +539,23 @@ import { CommonModule } from '@angular/common';
       .stat .stat-num { font-size: 2.2rem; }
       .stats-badge { display: none; }
     }
+
+    @media (max-width: 480px) {
+      .hero-wrap { padding: 16px 16px; gap: 28px; }
+      .hero-title {
+        .ht-top { font-size: 2.8rem; }
+        .ht-accent { font-size: 3.4rem; }
+      }
+      .hero-desc { font-size: 0.92rem; max-width: 100%; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .btn-primary, .btn-ghost { text-align: center; width: 100%; }
+      .reel-frame { padding: 22px 18px; }
+      .reel-number { font-size: 2.4rem; }
+      .stats-inner { padding: 0 16px; }
+      .stat { flex: 1 1 45%; padding: 16px 16px 16px 0; gap: 12px; }
+      .stat .stat-num { font-size: 1.8rem; }
+      .scroll-hint { display: none; }
+    }
   `]
 })
 export class HeroComponent implements OnInit {
@@ -541,6 +565,33 @@ export class HeroComponent implements OnInit {
     { value: '120+', label: 'Eventos',       display: '--' },
     { value: '3M+',  label: 'Alcance',       display: '--' },
   ];
+
+  // ── Mosaico de fondo: grilla de fotos reales de eventos que cubre
+  // todo el hero, en blanco y negro (ver .mosaic-mono en styles) ──
+  private readonly MOSAIC_COLS = 18;
+  private readonly MOSAIC_ROWS = 8;
+
+  // Fotos reales de eventos usadas como relleno del mosaico
+  private readonly MOSAIC_POOL = [
+    'assets/gallery/eventos/img1.jpg',  'assets/gallery/eventos/img2.jpg',
+    'assets/gallery/eventos/img3.png',  'assets/gallery/eventos/img4.png',
+    'assets/gallery/eventos/img5.png',  'assets/gallery/eventos/img6.png',
+    'assets/gallery/eventos/img7.png',  'assets/gallery/eventos/img8.png',
+    'assets/gallery/eventos/img9.png',  'assets/gallery/eventos/img10.png',
+    'assets/gallery/eventos/img11.png', 'assets/gallery/eventos/img12.png',
+    'assets/gallery/eventos/img13.png', 'assets/gallery/eventos/img14.png',
+    'assets/gallery/eventos/img15.png', 'assets/gallery/eventos/img16.png',
+    'assets/gallery/eventos/img17.png', 'assets/gallery/eventos/img18.png',
+    'assets/gallery/eventos/img19.png', 'assets/gallery/eventos/img20.png',
+  ];
+
+  mosaicTiles: { img: string }[] = this.buildMosaic();
+
+  private buildMosaic(): { img: string }[] {
+    const total = this.MOSAIC_COLS * this.MOSAIC_ROWS;
+    const pool = this.MOSAIC_POOL;
+    return Array.from({ length: total }, (_, i) => ({ img: pool[i % pool.length] }));
+  }
 
   private CHARS_NUM = '0123456789ABCDEF#@!%&';
 

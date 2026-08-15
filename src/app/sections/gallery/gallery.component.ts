@@ -263,6 +263,13 @@ import { GALLERY_EVENTS, MediaItem } from './gallery.data';
     .lb-prev { left: 12px; }
     .lb-next { right: 12px; }
 
+    @media (max-width: 480px) {
+      .lb-prev, .lb-next { width: 36px; height: 60px; font-size: 20px; }
+      .lb-close { width: 34px; height: 34px; top: 12px; right: 12px; font-size: 16px; }
+      .lb-info { gap: 12px; }
+      .lb-controls { width: 100%; justify-content: space-between; }
+    }
+
     .lb-content { max-width: 1000px; width: 100%; }
 
     .lb-info {
