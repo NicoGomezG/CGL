@@ -169,13 +169,6 @@ export const GALLERY_EVENTS: GalleryEvent[] = [
         date: '2025-10-25',
         description: 'ACTIVACION MOBIL ESPORTS - FESTIGAME 2025'
       },
-      {
-        type: 'image',
-        src: 'assets/gallery/eventos/img21.png',
-        title: 'FESTIGAME 2025',
-        date: '2025-10-25',
-        description: 'FINAL HOMEGROUND - FESTIGAME 2025'
-      },
     ]
   },
 

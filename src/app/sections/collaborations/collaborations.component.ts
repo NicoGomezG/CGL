@@ -224,7 +224,12 @@ import { CommonModule } from '@angular/common';
       &.left  { animation: marquee-left  30s linear infinite; }
       &.right { animation: marquee-right 30s linear infinite; }
 
-      &:hover { animation-play-state: paused; }
+      /* Solo pausa al pasar el mouse en dispositivos con puntero real.
+         En pantallas táctiles el ":hover" puede quedar "pegado" tras un
+         tap y congelar la animación, así que ahí queda siempre corriendo. */
+      @media (hover: hover) {
+        &:hover { animation-play-state: paused; }
+      }
     }
 
     .logos-row {
