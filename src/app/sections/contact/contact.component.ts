@@ -39,7 +39,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
               <div class="form-row">
                 <div class="form-field" [class.error]="isInvalid('name')">
-                  <label>Nombre *</label>
+                  <label>Nombre completo *</label>
                   <input type="text" formControlName="name" placeholder="Tu nombre">
                   <span class="err-msg" *ngIf="isInvalid('name')">Campo requerido</span>
                 </div>

@@ -36188,7 +36188,7 @@ var ContactComponent = class _ContactComponent {
           return ctx.onSubmit();
         });
         \u0275\u0275elementStart(15, "div", 12)(16, "div", 13)(17, "label");
-        \u0275\u0275text(18, "Nombre *");
+        \u0275\u0275text(18, "Nombre completo *");
         \u0275\u0275elementEnd();
         \u0275\u0275element(19, "input", 14);
         \u0275\u0275template(20, ContactComponent_span_20_Template, 2, 0, "span", 15);

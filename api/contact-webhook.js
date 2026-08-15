@@ -45,12 +45,11 @@ module.exports = async (req, res) => {
       {
         title: 'Nuevo mensaje de contacto — CGL',
         color: 0xff0049,
-        fields: [
-          { name: 'Nombre', value: name.slice(0, 256), inline: true },
-          { name: 'Email', value: email.slice(0, 256), inline: true },
-          { name: 'Servicio', value: service.slice(0, 256), inline: true },
-          { name: 'Mensaje', value: message.slice(0, 1024) },
-        ],
+        description:
+          `**Nombre:** ${name.slice(0, 256)}\n` +
+          `**Email:** ${email.slice(0, 256)}\n` +
+          `**Servicio:** ${service.slice(0, 256)}\n\n` +
+          `**Mensaje:**\n${message.slice(0, 1024)}`,
         timestamp: new Date().toISOString(),
       },
     ],
